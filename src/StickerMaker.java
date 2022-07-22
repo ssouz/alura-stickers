@@ -31,7 +31,7 @@ public class StickerMaker {
         graphics.setColor(Color.red);
         graphics.setFont(fonte);
         // escrever a frase na nova imagem
-        graphics.drawString("Bão", 100, newHeight - 100);
+        graphics.drawString("'-'", 100, newHeight - 100);
 
         // escrever nova imagem em arquivo
         ImageIO.write(newImage, "png", new File(fileName));

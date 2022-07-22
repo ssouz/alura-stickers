@@ -1,46 +1,43 @@
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
-import java.util.Map;
 
 public class App {
+
     public static void main(String[] args) throws Exception {
         // conexao http e buscar lista do api
-        String url = "https://api.mocki.io/v2/549a5d8b";
-        URI endereço = URI.create(url);
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder(endereço).GET().build();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-        String body = response.body();
-        
-        
 
-        // extrair dados [titulo,postere e classificar]
-        var parser = new JsonParser();
-        List<Map<String, String>> listaDeFilmes = parser.parse(body);
+        //PopularTv
+        String url = "https://api.mocki.io/v2/549a5d8b/MostPopularTVs";
+        ContentExtractor extractor = new ContentExtractor2(); 
+
+        //nasa
+        //String url = "https://api.mocki.io/v2/549a5d8b/NASA-APOD";
+        //ContentExtractor extractor = new ContentExtractor1(); 
+
+        var http = new ClientHttp();
+        String json = http.SearchData(url);
+
+
+      
 
         // exibir os dados
+        List<Content> contents = extractor.extractContent(json);
+
+
         StickerMaker maker = new StickerMaker();
-        for (Map<String,String> filme : listaDeFilmes) {
-           
+        for (int i = 0; i < 3; i++) {
 
-            String urlImage = filme.get("image");
-            String title = filme.get("title");
-            InputStream inputStream = new URL(urlImage).openStream();
+            Content content = contents.get(i);
 
-            String fileName = title +".png";
+            InputStream inputStream = new URL(content.getUrlImage()).openStream();
+            String fileName = "saida/" + content.getTitle() + ".png";
 
             maker.cria(inputStream, fileName);
 
-            System.out.println(title);
+            System.out.println(content.getTitle());
             System.out.println();
         }
-
 
     }
 }
